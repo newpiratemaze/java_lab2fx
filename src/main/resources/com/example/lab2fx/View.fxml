@@ -18,4 +18,5 @@
       </Pane>
       <Label fx:id="scoreLabel" text="Label" />
    </children>
+
 </VBox>

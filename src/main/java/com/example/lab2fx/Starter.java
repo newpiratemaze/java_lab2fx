@@ -15,5 +15,6 @@ public class Starter extends Application {
         stage.setTitle("MVVM");
         stage.setScene(scene);
         stage.show();
+
     }
 }
