@@ -8,7 +8,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.input.MouseEvent;
 
@@ -28,7 +27,6 @@ public class GameController {
     private double speed = 3; // скорость движения в пикселях за кадр
     private Random random = new Random();
     private boolean waveMode = false;
-    private boolean pause = false;
     @FXML
     public void initialize() {
         scoreLabel.textProperty().bind(
@@ -41,7 +39,7 @@ public class GameController {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if(pause==false)
+                if(!pause)
                 {
                     moveBallTowardsTarget();
                 }
@@ -52,9 +50,9 @@ public class GameController {
 
         gamePane.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                waveMode = !waveMode;
+                waveMode = !waveMode; // переключаем режим волны / случайный
                 if (waveMode) {
-
+                    // Для волны можно зафиксировать стартовое X
                     waveStartX = ball.getCenterX();
                 } else {
                     setNewTarget();
@@ -73,22 +71,23 @@ public class GameController {
 
     private void moveBallTowardsTarget() {
         if (waveMode) {
-                        speed = 2;
+            // Волнообразное движение по X: двигаем шарик по X с постоянной скоростью
+            speed = 2; // можно чуть помедленнее
             ball.setCenterX(ball.getCenterX() + speed);
 
-
+            // Ограничиваем движение по X границами
             if (ball.getCenterX() >= gamePane.getWidth() - ball.getRadius()) {
                 ball.setCenterX(ball.getRadius());
             }
 
-
+            // Вычисляем Y по формуле y = 300 + 100 * Math.sin(x/50)
             double y = 300 + 100 * Math.sin(ball.getCenterX() / 50);
-
+            // Проверяем, чтобы y оставалось в пределах панели
             y = Math.min(Math.max(y, ball.getRadius()), gamePane.getHeight() - ball.getRadius());
 
             ball.setCenterY(y);
         } else {
-
+            // Ваш текущий код случайного движения к цели
             double dx = targetX - ball.getCenterX();
             double dy = targetY - ball.getCenterY();
             double distance = Math.sqrt(dx * dx + dy * dy);
@@ -150,16 +149,12 @@ public class GameController {
         ball.setCenterX(newX);
         ball.setCenterY(newY);
     }
-
-
-    @FXML protected VBox vbox;
-
+    protected boolean pause=false;
     @FXML
-    public void setPause()
+    protected void setPause()
     {
-        pause= !pause;
+        pause=!pause;
     }
-
 
 }
 
